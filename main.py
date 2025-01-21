@@ -23,7 +23,7 @@ def create_label(product_name, product_price, product_SKU, product_barcode):
     pdf.add_page()
     pdf.set_margins(3, 2.5, 3)
     pdf.b_margin = 2.5
-    pdf.add_font('barcode', style='', fname='fonts/FRE3OF9X.ttf')
+    pdf.add_font('barcode', style='', fname='FRE3OF9X.ttf')
     pdf.set_font('helvetica', size=curr_font)
 
     page_width = pdf.w - pdf.l_margin - pdf.r_margin
