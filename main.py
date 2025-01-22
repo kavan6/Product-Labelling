@@ -10,6 +10,11 @@ import fpdf as fpdf
 
 bookName = ""
 
+base_dir = os.path.dirname(os.path.abspath(__file__))
+
+helvet_path = os.path.join(base_dir, "Helvetica.ttf")
+barcode_path = os.path.join(base_dir, "FRE3OF9X.ttf")
+
 def UploadAction(event=None):
     global bookName 
     bookName = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
@@ -23,8 +28,9 @@ def create_label(product_name, product_price, product_SKU, product_barcode):
     pdf.add_page()
     pdf.set_margins(3, 2.5, 3)
     pdf.b_margin = 2.5
-    pdf.add_font('barcode', style='', fname='FRE3OF9X.ttf')
-    pdf.set_font('helvetica', size=curr_font)
+    pdf.add_font('barcode', style='', fname=barcode_path)
+    pdf.add_font('helvet', style='', fname=helvet_path)
+    pdf.set_font('helvet', size=curr_font)
 
     page_width = pdf.w - pdf.l_margin - pdf.r_margin
 
@@ -33,7 +39,7 @@ def create_label(product_name, product_price, product_SKU, product_barcode):
 
     while(pname_width + pprice_width > page_width):
         curr_font -= 1
-        pdf.set_font('helvetica', size=curr_font)
+        pdf.set_font('helvet', size=curr_font)
 
         pname_width = pdf.get_string_width(product_name) + 10
         pprice_width = pdf.get_string_width(product_price)
@@ -57,17 +63,19 @@ def create_label(product_name, product_price, product_SKU, product_barcode):
     pdf.cell(page_width, 9, product_barcode, align="C")
 
     curr_font = 56
-    pdf.set_font('helvetica', size=curr_font)
+    pdf.set_font('helvet', size=curr_font)
     SKU_width = pdf.get_string_width(product_SKU)
 
     while(SKU_width > page_width):
         curr_font -= 1
-        pdf.set_font('helvetica', size=56)
+        pdf.set_font('helvet', size=56)
         
         SKU_width = pdf.get_string_width(product_SKU)
 
     pdf.set_y(130)
     pdf.cell(page_width, 9, product_SKU, align="C")
+
+    product_SKU = product_SKU.replace("/", "_").replace("\\", "_")
 
     os.makedirs("labels", exist_ok=True)
     pdf.output(f"labels/{product_SKU}.pdf")
@@ -93,9 +101,12 @@ def CreateLabels(event=None):
             if not product_name:
                 break
 
+
+            print("Curr row: " + str(row))
+            print(product_name)
             create_label(
                 str(product_name), 
-                f"£{product_price}" if product_price else "£0.00", 
+                f"£{'{:.2f}'.format(product_price)}" if product_price else "£0.00", 
                 str(product_SKU) if product_SKU else "", 
                 f"*{product_barcode}*" if product_barcode else ""
             )
