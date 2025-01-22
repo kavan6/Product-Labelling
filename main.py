@@ -1,6 +1,6 @@
 ### Kavan Heppenstall 21/01/2025
 ### Product labelling software for excel spreadsheets
-# Please move your spreadsheet into the working directory of this file
+# Use "pyinstaller --onefile --add-data "Helvetica.ttf;." --add-data "FRE3OF9X.ttf;." main.py" to build
 
 import os
 import tkinter as tk
@@ -75,7 +75,7 @@ def create_label(product_name, product_price, product_SKU, product_barcode):
     pdf.set_y(130)
     pdf.cell(page_width, 9, product_SKU, align="C")
 
-    product_SKU = product_SKU.replace("/", "_").replace("\\", "_")
+    #product_SKU = product_SKU.replace("/", "_").replace("\\", "_")
 
     os.makedirs("labels", exist_ok=True)
     pdf.output(f"labels/{product_SKU}.pdf")
@@ -101,9 +101,6 @@ def CreateLabels(event=None):
             if not product_name:
                 break
 
-
-            print("Curr row: " + str(row))
-            print(product_name)
             create_label(
                 str(product_name), 
                 f"£{'{:.2f}'.format(product_price)}" if product_price else "£0.00", 
