@@ -70,7 +70,7 @@ def create_label(product_name, product_price, product_SKU, product_barcode):
     pdf.cell(page_width, 9, product_SKU, align="C")
 
     os.makedirs("labels", exist_ok=True)
-    pdf.output(f"labels/{product_name}_label.pdf")
+    pdf.output(f"labels/{product_SKU}.pdf")
 
 def CreateLabels(event=None):
     global bookName
