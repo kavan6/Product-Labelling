@@ -1,6 +1,7 @@
 ### Kavan Heppenstall 21/01/2025
 ### Product labelling software for excel spreadsheets
 # Use "pyinstaller --onefile --add-data "Helvetica.ttf;." --add-data "FRE3OF9X.ttf;." main.py" to build
+# Produces just over 5 pdfs a second
 
 import threading
 import sys
