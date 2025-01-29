@@ -110,18 +110,40 @@ def create_label(product_name, product_price, product_SKU, product_barcode, isSh
         pdf.set_y(130)
         pdf.cell(page_width, 9, product_SKU, align="C")
     else:
-        curr_font = 32
+        curr_font = 48
         pdf.set_font('helvet', size=curr_font)
-        pname_width = pdf.get_string_width(product_name)
 
-        while(pname_width > page_width):
-            curr_font -= 1
-            pdf.set_font('helvet', size=curr_font)
+        while True:
+            words = product_name.split()
+            lines = []
+            line = ""
+
+            for word in words:
+                test_line = f"{line} {word}".strip() if line else word
+
+                if(pdf.get_string_width(test_line) <= page_width):
+                    line = test_line
+                else:
+                    lines.append(line)
+                    line = word
             
-            pname_width = pdf.get_string_width(product_name)
+            if line:
+                lines.append(line)
 
-        pdf.set_y(130)
-        pdf.cell(page_width, 9, product_name, align="C")
+            if len(lines) <= 3:
+                break
+            else:
+                curr_font -= 2
+                if(curr_font < 10):
+                    curr_font = 10
+                    break
+
+            pdf.set_font("helvet", size=curr_font)
+
+        pdf.set_y(125)
+
+        for line in lines:
+            pdf.cell(page_width, 18, line, align="C", ln=True)
 
     if(not isShow):
         os.makedirs("Warehouse Labels", exist_ok=True)
@@ -141,7 +163,7 @@ def CreateLabels(event=None, isShow=False):
             wb = xw.Book(bookName) 
             sheet = wb.sheets[0]
 
-            row = 3
+            row = 470
             loading_bar.start()
             while True:
 
@@ -157,7 +179,7 @@ def CreateLabels(event=None, isShow=False):
                     str(product_name), 
                     f"£{'{:.2f}'.format(product_price)}" if product_price else "£0.00", 
                     str(product_SKU) if product_SKU else "", 
-                    f"*{product_barcode}*" if product_barcode else "",
+                    f"*{str(int(product_barcode))}*" if product_barcode else "",
                     isShow=isShow
                 )
                 row += 1
